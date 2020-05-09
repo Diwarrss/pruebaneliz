@@ -22,7 +22,7 @@ Route::get('employe/get', 'EmployeController@get');
 Route::get('employe/getImmediateBoss', 'EmployeController@getImmediateBoss');
 Route::post('employe/create', 'EmployeController@create');
 Route::post('employe/update', 'EmployeController@update');
-Route::post('employe/delete', 'EmployeController@delete');
+Route::put('employe/delete', 'EmployeController@delete');
 
 //Rutas CivilStateController
 Route::get('civilstate/get', 'CivilStateController@get');

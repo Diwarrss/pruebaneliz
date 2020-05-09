@@ -11,7 +11,7 @@ class EmployeController extends Controller
 {
     public function get()
     {
-        return Employe::with(['position','civilstate', 'immediateBoss'])->paginate(5);
+        return Employe::with(['position','civilstate', 'immediateBoss'])->/* latest()-> */paginate(5);
     }
 
     public function getImmediateBoss(Request $request)
@@ -26,30 +26,37 @@ class EmployeController extends Controller
     public function create(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
+
+
         try {
             DB::beginTransaction();
-
+            //decodificamos el request
+            $requestData = json_decode($request->data);
             //proceso para guardar la imagen en storage
             $file = $request->foto;
             $nombreImagen = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('/storage/img/'), $nombreImagen);
 
             //guardar datos en tabla employes
             $employe = new Employe();
-            $employe->documento = $request->data['documento'];
-            $employe->nombres = $request->data['nombres'];
-            $employe->apellidos = $request->data['apellidos'];
-            $employe->fecha_nacimiento = $request->data['fecha_nacimiento'];
-            $employe->sexo = $request->data['sexo'];
-            $employe->foto = "storage/img/$nombreImagen";
-            $employe->estado_contrato = $request->data['estado_contrato'];
-            $employe->civilstate_id = $request->data['civilstate_id'];
-            $employe->position_id = $request->data['position_id'];
-            $employe->immediateboss_id = $request->data['immediateboss_id'];
+            $employe->documento = $requestData->documento;
+            $employe->nombres = $requestData->nombres;
+            $employe->apellidos = $requestData->apellidos;
+            $employe->fecha_nacimiento = $requestData->fecha_nacimiento;
+            $employe->sexo = $requestData->sexo;
+            $employe->foto = "img/$nombreImagen";
+            $employe->estado_contrato = $requestData->estado_contrato;
+            $employe->civilstate_id = $requestData->civilstate_id;
+            $employe->position_id = $requestData->position_id;
+            if ($requestData->immediateboss_id === "") {
+              $employe->immediateboss_id = null;
+            }else{
+              $employe->immediateboss_id = $requestData->immediateboss_id;
+            }
             $employe->save();
-
-            return response()->json(['type' => 'success'], 200);
             DB::commit();
+
+            $file->move(public_path('/storage/img/'), $nombreImagen);
+            return response()->json(['type' => 'success'], 200);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['type' => 'error'], 500);
@@ -99,13 +106,17 @@ class EmployeController extends Controller
     public function delete(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
-
-        $employe = Employe::with('position')->findOrFail($request->id);
+        //obtenemos el empleado elegido para eliminar
+        $employe = Employe::with('position')->findOrFail($request->params['id']);
 
         //buscamos si tiene personal a cargo
         $searchImmediate = collect(Employe::where('immediateboss_id', $employe->id)->get());
 
         if ($searchImmediate->count() === 0) {
+            //eliminar la imagen FALTA REVISARLA
+            $fileActually = $employe->foto;
+            Storage::delete($fileActually);
+
             $employe->delete();
             return response()->json(
                 ['type' => 'success',
@@ -114,6 +125,6 @@ class EmployeController extends Controller
 
         return response()->json(
             ['type' => 'warning',
-            'message' => 'El ' . $employe->position->nombre . ' tiene personal a cargo'], 422);
+            'message' => 'El ' . $employe->position->nombre . ' tiene personal a cargo'], 200);
     }
 }
