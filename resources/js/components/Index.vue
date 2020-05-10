@@ -34,7 +34,7 @@
             </tbody> -->
             <tbody v-for="(data, index) in employes.data" :key="index.id">
               <td>
-                <a href="">{{data.id | addCero}}</a>
+                <a href="" @click.prevent="openModal('show', data)">{{data.id | addCero}}</a>
               </td>
               <td v-text="data.documento"></td>
               <td>{{data.nombres}} {{data.apellidos}} </td>
@@ -47,7 +47,7 @@
               </td>
               <td v-else></td>
               <td>
-                <button class="btn btn-warning">Editar</button>
+                <button class="btn btn-warning" @click.prevent="openModal('update', data)" >Editar</button>
                 <button class="btn btn-danger" @click.prevent="deleteData(data.id)" >Eliminar</button>
               </td>
             </tbody>
@@ -70,10 +70,16 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="modalEmployeLabel">
+            <h5 class="modal-title" id="modalEmployeLabel" v-if="typeModal === 'new'">
               Crear Empleado
             </h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <h5 class="modal-title" id="modalEmployeLabel" v-else-if="typeModal === 'update'">
+              Editar Empleado
+            </h5>
+            <h5 class="modal-title" id="modalEmployeLabel" v-else>
+              Información del Empleado
+            </h5>
+            <button type="button" class="close" @click.prevent="closeModal" aria-label="Cerrar">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -82,30 +88,34 @@
               <div class="form-group row">
                 <label for="documento" class="col-md-4 col-form-label font-weight-bold">Documento</label>
                 <div class="col-md-8">
-                  <input v-model="formData.documento" type="text" class="form-control" id="documento">
+                  <input v-model="formData.documento" type="text" class="form-control" id="documento" v-if="typeModal != 'show'">
+                  <span class="form-control" v-else>{{formData.documento}}</span>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="nombres" class="col-md-4 col-form-label font-weight-bold">Nombres</label>
                 <div class="col-md-8">
-                  <input v-model="formData.nombres" type="text" class="form-control" id="nombres">
+                  <input v-model="formData.nombres" type="text" class="form-control" id="nombres" v-if="typeModal != 'show'">
+                  <span class="form-control" v-else>{{formData.nombres}}</span>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="apellidos" class="col-md-4 col-form-label font-weight-bold">Apellidos</label>
                 <div class="col-md-8">
-                  <input v-model="formData.apellidos" type="text" class="form-control" id="apellidos">
+                  <input v-model="formData.apellidos" type="text" class="form-control" id="apellidos" v-if="typeModal != 'show'">
+                  <span class="form-control" v-else>{{formData.apellidos}}</span>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="fechaNacimiento" class="col-md-4 col-form-label font-weight-bold">Fecha Nacimiento</label>
                 <div class="col-md-8">
-                  <input v-model="formData.fecha_nacimiento" type="date" class="form-control" id="fechaNacimiento">
+                  <input v-model="formData.fecha_nacimiento" type="date" class="form-control" id="fechaNacimiento" v-if="typeModal != 'show'">
+                  <span class="form-control" v-else>{{formData.fecha_nacimiento}}</span>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="sexo" class="col-md-4 col-form-label font-weight-bold">Sexo</label>
-                <div class="col-md-8 my-auto">
+                <div class="col-md-8 my-auto" v-if="typeModal != 'show'">
                   <div class="form-check form-check-inline check_pointer">
                     <input v-model="formData.sexo" class="form-check-input" type="radio" name="radioButtonSexo" id="checkH" value="H">
                     <label class="form-check-label" for="checkH">Hombre</label>
@@ -115,10 +125,13 @@
                     <label class="form-check-label" for="checkM">Mujer</label>
                   </div>
                 </div>
+                <div class="col-md-8 my-auto" v-else>
+                  <span class="form-control">{{formData.sexo =='H' ? 'Hombre' : 'Mujer'}}</span>
+                </div>
               </div>
               <div class="form-group row">
                 <label class="col-md-4 col-form-label font-weight-bold">Foto</label>
-                <div class="col-md-8 upload_file mb-3">
+                <div class="col-md-8 upload_file mb-3" v-if="typeModal != 'show'">
                   <input
                     type="file"
                     class="custom-file-input"
@@ -148,7 +161,7 @@
               </div>
               <div class="form-group row">
                 <label for="estado" class="col-md-4 col-form-label font-weight-bold">Estado Contrato</label>
-                <div class="col-md-8 my-auto">
+                <div class="col-md-8 my-auto" v-if="typeModal != 'show'">
                   <div class="form-check form-check-inline check_pointer">
                     <input v-model="formData.estado_contrato" class="form-check-input" type="radio" name="radioButtonEstado" id="checkA" value="1">
                     <label class="form-check-label" for="checkA">Activo</label>
@@ -158,10 +171,13 @@
                     <label class="form-check-label" for="checkI">Inactivo</label>
                   </div>
                 </div>
+                <div class="col-md-8 my-auto" v-else>
+                  <span class="form-control">{{formData.estado_contrato == 1 ? 'Activo' : 'Inactivo'}}</span>
+                </div>
               </div>
               <div class="form-group row">
                 <label for="estadocivil" class="col-md-4 col-form-label font-weight-bold">Estado Civil</label>
-                <div class="col-md-8">
+                <div class="col-md-8" v-if="typeModal != 'show'">
                   <select class="custom-select" v-model="formData.civilstate_id">
                     <option value='' selected disabled>Seleccionar...</option>
                     <option
@@ -171,10 +187,13 @@
                     </option>
                   </select>
                 </div>
+                <div class="col-md-8" v-else>
+                  <span class="form-control">{{formData.civilstate_id}}</span>
+                </div>
               </div>
               <div class="form-group row">
                 <label for="cargo" class="col-md-4 col-form-label font-weight-bold">Cargo</label>
-                <div class="col-md-8">
+                <div class="col-md-8" v-if="typeModal != 'show'">
                   <select
                     class="custom-select"
                     v-model="formData.position_id"
@@ -188,10 +207,13 @@
                     </option>
                   </select>
                 </div>
+                <div class="col-md-8" v-else>
+                  <span class="form-control">{{formData.position_id}}</span>
+                </div>
               </div>
               <div class="form-group row">
                 <label for="jefeacargo" class="col-md-4 col-form-label font-weight-bold">Jefe a Cargo</label>
-                <div class="col-md-8">
+                <div class="col-md-8" v-if="typeModal != 'show'">
                   <select class="custom-select" v-model="formData.immediateboss_id">
                     <option value='' selected disabled>Seleccionar...</option>
                     <option
@@ -202,15 +224,24 @@
                     </option>
                   </select>
                 </div>
+                <div class="col-md-8" v-else>
+                  <span class="form-control">{{formData.immediateboss_id}}</span>
+                </div>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">
+            <button type="button" class="btn btn-danger" @click.prevent="closeModal" v-if="typeModal != 'show'">
               Cancelar
             </button>
-            <button type="button" class="btn btn-success" @click.prevent="saveEmploye">
+            <button type="button" class="btn btn-danger" @click.prevent="closeModal" v-else>
+              Cerrar
+            </button>
+            <button v-if="typeModal === 'new'" type="button" class="btn btn-success" @click.prevent="saveEmploye">
               Guardar
+            </button>
+            <button v-if="typeModal === 'update'" type="button" class="btn btn-success" @click.prevent="updateEmploye">
+              Actualizar
             </button>
           </div>
         </div>
@@ -236,6 +267,7 @@
         },
         foto: '',
         fotoMiniatura: '',
+        typeModal: '',
         employes: {},
         civilStates: [],
         positions: [],
@@ -256,8 +288,45 @@
       }
     },
     methods: {
-      openModal(type){
+      /* al abrir la modal recibimos 2 parametros */
+      openModal(type, data){
         $('#modalEmploye').modal('show')
+        switch (type) {
+          case 'new':
+            this.typeModal = 'new'
+            break;
+
+          case 'update':
+            this.typeModal = 'update'
+            this.formData.documento = data['documento']
+            this.formData.nombres = data['nombres']
+            this.formData.apellidos = data['apellidos']
+            this.formData.fecha_nacimiento = data['fecha_nacimiento']
+            this.formData.sexo = data['sexo']
+            this.formData.estado_contrato = data['estado_contrato']
+            this.formData.civilstate_id = data['civilstate_id']
+            this.formData.position_id = data['position_id']
+            this.formData.immediateboss_id = data['immediateboss_id']
+            this.fotoMiniatura = data['foto']
+            break;
+
+          case 'show':
+            this.typeModal = 'show'
+            this.formData.documento = data['documento']
+            this.formData.nombres = data['nombres']
+            this.formData.apellidos = data['apellidos']
+            this.formData.fecha_nacimiento = data['fecha_nacimiento']
+            this.formData.sexo = data['sexo']
+            this.formData.estado_contrato = data['estado_contrato']
+            this.formData.civilstate_id = data['civilstate']['nombre']
+            this.formData.position_id = data['position']['nombre']
+            data['immediateBosses'] ? this.formData.immediateboss_id = data['immediateBosses']['nombre'] : this.formData.immediateboss_id = ''
+            this.fotoMiniatura = data['foto']
+            break;
+
+          default:
+            break;
+        }
       },
       closeModal(){
         $('#modalEmploye').modal('hide')
@@ -348,6 +417,9 @@
         .catch(err => {
           console.error(err);
         })
+      },
+      updateEmploye(){
+        this.$swal('Empleado Actualizado')
       },
       deleteData(id){
         let me = this
