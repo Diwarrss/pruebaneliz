@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Employe extends Model
 {
+  //obtenemos el id con los 0 a su izquierda
+    /* public function getIdAttribute($value)
+    {
+        if($value){
+            return str_pad($value, 4, '0', STR_PAD_LEFT);
+        }else{
+            return null;
+        }
+    } */
+
     public function position()
     {
         //return position for employe

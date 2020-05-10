@@ -43,7 +43,7 @@ class EmployeController extends Controller
             $employe->apellidos = $requestData->apellidos;
             $employe->fecha_nacimiento = $requestData->fecha_nacimiento;
             $employe->sexo = $requestData->sexo;
-            $employe->foto = "img/$nombreImagen";
+            $employe->foto = "storage/img/$nombreImagen";
             $employe->estado_contrato = $requestData->estado_contrato;
             $employe->civilstate_id = $requestData->civilstate_id;
             $employe->position_id = $requestData->position_id;
@@ -107,7 +107,7 @@ class EmployeController extends Controller
     {
         if (!$request->ajax()) return redirect('/');
         //obtenemos el empleado elegido para eliminar
-        $employe = Employe::with('position')->findOrFail($request->params['id']);
+        $employe = Employe::with('position')->findOrFail($request->id);
 
         //buscamos si tiene personal a cargo
         $searchImmediate = collect(Employe::where('immediateboss_id', $employe->id)->get());
@@ -115,6 +115,7 @@ class EmployeController extends Controller
         if ($searchImmediate->count() === 0) {
             //eliminar la imagen FALTA REVISARLA
             $fileActually = $employe->foto;
+            //dd($fileActually);
             Storage::delete($fileActually);
 
             $employe->delete();

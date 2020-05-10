@@ -243,8 +243,16 @@
       }
     },
     filters:{
+      /* Funcion para agregar los 0 al inicio del num */
       addCero(value){
-        return value
+        let n = Math.abs(value);
+        let zeros = Math.max(0, 4 - Math.floor(n).toString().length );
+        let zeroString = Math.pow(10,zeros).toString().substr(1);
+        if( 4 < 0 ) {
+            zeroString = '-' + zeroString;
+        }
+
+        return zeroString+n;
       }
     },
     methods: {
@@ -334,7 +342,7 @@
             //confirmButtonText: 'Aceptar',
             timer: 1800
           });
-          this.getEmployes()
+          this.getEmployes(this.employes.current_page)
           this.closeModal()
         })
         .catch(err => {
@@ -353,20 +361,16 @@
           cancelButtonText: 'No, cancelar'
         }).then((result) => {
           if (result.value) {
-            axios.put('employe/delete',{
-              params: {
-                id: id
-              }
-            })
+            axios.put('employe/delete',{id: id})
             .then(res => {
-              me.getEmployes(this.employes.current_page)
+              me.getEmployes(me.employes.current_page)
               if (res.type === 'success') {
                 let message = res.data.message
                 me.$swal({
                   position: 'top',
                   icon: 'success',
                   title: `${message}`,
-                  showConfirmButton: true,
+                  //showConfirmButton: true,
                   //confirmButtonText: 'Aceptar',
                   timer: 1800
                 });
@@ -390,10 +394,10 @@
       },
       getEmployes(page){
         axios.get('employe/get', {
-            params: {
-              page: page
-            }
-          }).then(res => {
+          params:{
+            page: page
+          }
+        }).then(res => {
             this.employes = res.data
           })
           .catch(err => {
