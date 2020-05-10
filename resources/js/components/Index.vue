@@ -47,7 +47,7 @@
               </td>
               <td v-else></td>
               <td>
-                <button class="btn btn-warning" @click.prevent="openModal('update', data)" >Editar</button>
+                <button class="btn btn-warning" @click.prevent="openModal('update', data), getImmediateBosses(data.position_id)">Editar</button>
                 <button class="btn btn-danger" @click.prevent="deleteData(data.id)" >Eliminar</button>
               </td>
             </tbody>
@@ -254,6 +254,7 @@
   export default {
     data() {
       return {
+        id: '',
         formData:{
           documento: '',
           nombres: '',
@@ -298,6 +299,7 @@
 
           case 'update':
             this.typeModal = 'update'
+            this.id = data['id']
             this.formData.documento = data['documento']
             this.formData.nombres = data['nombres']
             this.formData.apellidos = data['apellidos']
@@ -330,6 +332,7 @@
       },
       closeModal(){
         $('#modalEmploye').modal('hide')
+        this.id = ''
         this.foto = ''
         this.fotoMiniatura = ''
         this.formData.documento = ''
@@ -418,8 +421,32 @@
           console.error(err);
         })
       },
-      updateEmploye(){
-        this.$swal('Empleado Actualizado')
+      updateEmploye(id){
+        let data = new FormData();
+        data.append("id", this.id);
+        data.append("data", JSON.stringify(this.formData));
+        data.append("foto", this.foto);
+
+        axios.post('employe/update', data, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+          })
+        .then(res => {
+          this.$swal({
+            position: 'top',
+            icon: 'success',
+            title: 'Empleado editado exitosamente!',
+            //showConfirmButton: true,
+            //confirmButtonText: 'Aceptar',
+            timer: 1800
+          });
+          this.getEmployes(this.employes.current_page)
+          this.closeModal()
+        })
+        .catch(err => {
+          console.error(err);
+        })
       },
       deleteData(id){
         let me = this

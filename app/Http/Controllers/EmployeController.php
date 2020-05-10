@@ -26,8 +26,6 @@ class EmployeController extends Controller
     public function create(Request $request)
     {
         if (!$request->ajax()) return redirect('/');
-
-
         try {
             DB::beginTransaction();
             //decodificamos el request
@@ -69,6 +67,8 @@ class EmployeController extends Controller
         try {
             DB::beginTransaction();
             $employe = Employe::findOrFail($request->id);
+            //decodificamos el request
+            $requestData = json_decode($request->data);
 
             //Validar si viene imagen
             if ($request->foto) {
@@ -83,19 +83,23 @@ class EmployeController extends Controller
             }
 
             //guardar datos en tabla employes
-            $employe->documento = $request->data['documento'];
-            $employe->nombres = $request->data['nombres'];
-            $employe->apellidos = $request->data['apellidos'];
-            $employe->fecha_nacimiento = $request->data['fecha_nacimiento'];
-            $employe->sexo = $request->data['sexo'];
-            $employe->estado_contrato = $request->data['estado_contrato'];
-            $employe->civilstate_id = $request->data['civilstate_id'];
-            $employe->position_id = $request->data['position_id'];
-            $employe->immediateboss_id = $request->data['immediateboss_id'];
+            $employe->documento = $requestData->documento;
+            $employe->nombres = $requestData->nombres;
+            $employe->apellidos = $requestData->apellidos;
+            $employe->fecha_nacimiento = $requestData->fecha_nacimiento;
+            $employe->sexo = $requestData->sexo;
+            $employe->estado_contrato = $requestData->estado_contrato;
+            $employe->civilstate_id = $requestData->civilstate_id;
+            $employe->position_id = $requestData->position_id;
+            if ($requestData->immediateboss_id === "") {
+              $employe->immediateboss_id = null;
+            }else{
+              $employe->immediateboss_id = $requestData->immediateboss_id;
+            }
             $employe->save();
 
-            return response()->json(['type' => 'success'], 200);
             DB::commit();
+            return response()->json(['type' => 'success'], 200);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['type' => 'error'], 500);

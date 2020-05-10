@@ -2183,6 +2183,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      id: '',
       formData: {
         documento: '',
         nombres: '',
@@ -2229,6 +2230,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
         case 'update':
           this.typeModal = 'update';
+          this.id = data['id'];
           this.formData.documento = data['documento'];
           this.formData.nombres = data['nombres'];
           this.formData.apellidos = data['apellidos'];
@@ -2261,6 +2263,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     closeModal: function closeModal() {
       $('#modalEmploye').modal('hide');
+      this.id = '';
       this.foto = '';
       this.fotoMiniatura = '';
       this.formData.documento = '';
@@ -2353,8 +2356,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         console.error(err);
       });
     },
-    updateEmploye: function updateEmploye() {
-      this.$swal('Empleado Actualizado');
+    updateEmploye: function updateEmploye(id) {
+      var _this5 = this;
+
+      var data = new FormData();
+      data.append("id", this.id);
+      data.append("data", JSON.stringify(this.formData));
+      data.append("foto", this.foto);
+      axios.post('employe/update', data, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }).then(function (res) {
+        _this5.$swal({
+          position: 'top',
+          icon: 'success',
+          title: 'Empleado editado exitosamente!',
+          //showConfirmButton: true,
+          //confirmButtonText: 'Aceptar',
+          timer: 1800
+        });
+
+        _this5.getEmployes(_this5.employes.current_page);
+
+        _this5.closeModal();
+      })["catch"](function (err) {
+        console.error(err);
+      });
     },
     deleteData: function deleteData(id) {
       var me = this;
@@ -2401,32 +2429,32 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     getEmployes: function getEmployes(page) {
-      var _this5 = this;
+      var _this6 = this;
 
       axios.get('employe/get', {
         params: {
           page: page
         }
       }).then(function (res) {
-        _this5.employes = res.data;
+        _this6.employes = res.data;
       })["catch"](function (err) {
         console.error(err);
       });
     }
   },
   created: function created() {
-    var _this6 = this;
+    var _this7 = this;
 
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _this6.getCivilStates();
+              _this7.getCivilStates();
 
-              _this6.getPositions();
+              _this7.getPositions();
 
-              _this6.getEmployes();
+              _this7.getEmployes();
 
             case 3:
             case "end":
@@ -43314,7 +43342,8 @@ var render = function() {
                           on: {
                             click: function($event) {
                               $event.preventDefault()
-                              return _vm.openModal("update", data)
+                              _vm.openModal("update", data),
+                                _vm.getImmediateBosses(data.position_id)
                             }
                           }
                         },
