@@ -21,17 +21,6 @@
                 <th scope="col">Opciones</th>
               </tr>
             </thead>
-            <!-- <tbody v-if="!employes.data">
-              <td colspan="7">
-                <div role="alert" class="alert alert-danger text-center">
-                    <div class="form-group">
-                      <strong>
-                          <h5>¡Sin información!</h5>
-                      </strong>
-                    </div>
-                </div>
-                </td>
-            </tbody> -->
             <tbody v-for="(data, index) in employes.data" :key="index.id">
               <td>
                 <a href="" @click.prevent="openModal('show', data)">{{data.id | addCero}}</a>
@@ -39,15 +28,14 @@
               <td v-text="data.documento"></td>
               <td>{{data.nombres}} {{data.apellidos}} </td>
               <td>{{data.position.nombre}}</td>
-              <td v-if="data.estado_contrato">Activo</td>
-              <td v-else>Inactivo</td>
+              <td>{{data.estado_contrato ? 'Activo' : 'Inactivo'}}</td>
               <td v-if="data.immediate_boss">
                 <strong>{{data.immediate_boss.nombres}} {{data.immediate_boss.apellidos}}</strong> <br>
                 <i>{{data.immediate_boss.position.nombre}}</i>
               </td>
               <td v-else></td>
               <td>
-                <button class="btn btn-warning" @click.prevent="openModal('update', data), getImmediateBosses(data.position_id)">Editar</button>
+                <button class="btn btn-warning" @click.prevent="openModal('update', data)">Editar</button>
                 <button class="btn btn-danger" @click.prevent="deleteData(data.id)" >Eliminar</button>
               </td>
             </tbody>
@@ -235,8 +223,8 @@
                   <select
                     class="custom-select"
                     v-model="formData.position_id"
-                    @change="getImmediateBosses(formData.position_id)"
-                    :class="{'is-invalid' : $v.formData.position_id.$invalid, 'is-valid' : !$v.formData.position_id.$invalid}">
+                    :class="{'is-invalid' : $v.formData.position_id.$invalid, 'is-valid' : !$v.formData.position_id.$invalid}"
+                    @change="getImmediateBosses">
                     <option value='' selected disabled>Seleccionar...</option>
                     <option
                       :value="position.id"
@@ -316,10 +304,10 @@ import { required, maxLength } from 'vuelidate/lib/validators'
         foto: '',
         fotoMiniatura: '',
         typeModal: '',
+        allEmployes: [],
         employes: {},
         civilStates: [],
-        positions: [],
-        immediateBosses: []
+        positions: []
       }
     },
     validations: {
@@ -346,6 +334,19 @@ import { required, maxLength } from 'vuelidate/lib/validators'
         return zeroString+n;
       }
     },
+    computed: {
+      immediateBosses(){
+        let positionAfter = this.formData.position_id
+        let value = positionAfter != '' ? --positionAfter : ''
+        let result = this.allEmployes.filter(em => (em.position_id === value))
+        if (result.length) {
+          return result
+        }else{
+          this.formData.immediateboss_id = ''
+          return ''
+        }
+      },
+    },
     methods: {
       /* al abrir la modal recibimos 2 parametros */
       openModal(type, data){
@@ -366,8 +367,9 @@ import { required, maxLength } from 'vuelidate/lib/validators'
             this.formData.estado_contrato = data['estado_contrato']
             this.formData.civilstate_id = data['civilstate_id']
             this.formData.position_id = data['position_id']
-            this.formData.immediateboss_id = data['immediateboss_id']
             this.fotoMiniatura = data['foto']
+            data['immediateboss_id'] ? this.formData.immediateboss_id = data['immediateboss_id'] : this.formData.immediateboss_id = null
+
             break;
 
           case 'show':
@@ -380,7 +382,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
             this.formData.estado_contrato = data['estado_contrato']
             this.formData.civilstate_id = data['civilstate']['nombre']
             this.formData.position_id = data['position']['nombre']
-            data['immediateBosses'] ? this.formData.immediateboss_id = data['immediateBosses']['nombre'] : this.formData.immediateboss_id = ''
+            data['immediateboss_id'] ? this.formData.immediateboss_id = data['immediate_boss']['nombres'] + ' ' + data['immediate_boss']['apellidos'] : this.formData.immediateboss_id = ''
             this.fotoMiniatura = data['foto']
             break;
 
@@ -405,11 +407,6 @@ import { required, maxLength } from 'vuelidate/lib/validators'
       },
       obtenerImagen(e) {
         this.foto = event.target.files[0]
-        /* if (this.formData.foto.type === 'image/png') {
-          this.$swal('La imagen es PNG');
-
-        } */
-        //console.log(this.foto);
         this.showImage(this.foto)
       },
       showImage(file) {
@@ -439,19 +436,9 @@ import { required, maxLength } from 'vuelidate/lib/validators'
           console.error(err);
         })
       },
-      getImmediateBosses(id){
+      //se resetea el valor de jefe inmediato
+      getImmediateBosses(){
         this.formData.immediateboss_id = ''
-        axios.get('employe/getImmediateBoss', {
-              params: {
-                position_id: id
-              }
-            })
-          .then(res => {
-            this.immediateBosses = res.data
-          })
-          .catch(err => {
-            console.error(err);
-          })
       },
       saveEmploye(){
         if (this.$v.$invalid) {
@@ -483,6 +470,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
               //confirmButtonText: 'Aceptar',
               timer: 1800
             });
+            this.getAllEmployes()
             this.getEmployes(this.employes.current_page)
             this.closeModal()
           })
@@ -511,6 +499,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
             //confirmButtonText: 'Aceptar',
             timer: 1800
           });
+          this.getAllEmployes()
           this.getEmployes(this.employes.current_page)
           this.closeModal()
         })
@@ -564,6 +553,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
       getEmployes(page){
         axios.get('employe/get', {
           params:{
+            paginate: true,
             page: page
           }
         }).then(res => {
@@ -573,11 +563,21 @@ import { required, maxLength } from 'vuelidate/lib/validators'
             console.error(err);
           })
       },
+      getAllEmployes(){
+        axios.get('employe/get')
+          .then(res => {
+            this.allEmployes = res.data
+          })
+          .catch(err => {
+            console.error(err);
+          })
+      }
     },
     async created() {
       this.getCivilStates()
       this.getPositions()
       this.getEmployes()
+      this.getAllEmployes()
     },
   }
 </script>

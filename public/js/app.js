@@ -2215,18 +2215,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //importamos las reglas a validar de la API vuelidate
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2247,10 +2235,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       foto: '',
       fotoMiniatura: '',
       typeModal: '',
+      allEmployes: [],
       employes: {},
       civilStates: [],
-      positions: [],
-      immediateBosses: []
+      positions: []
     };
   },
   validations: {
@@ -2297,6 +2285,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return zeroString + n;
     }
   },
+  computed: {
+    immediateBosses: function immediateBosses() {
+      var positionAfter = this.formData.position_id;
+      var value = positionAfter != '' ? --positionAfter : '';
+      var result = this.allEmployes.filter(function (em) {
+        return em.position_id === value;
+      });
+
+      if (result.length) {
+        return result;
+      } else {
+        this.formData.immediateboss_id = '';
+        return '';
+      }
+    }
+  },
   methods: {
     /* al abrir la modal recibimos 2 parametros */
     openModal: function openModal(type, data) {
@@ -2318,8 +2322,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           this.formData.estado_contrato = data['estado_contrato'];
           this.formData.civilstate_id = data['civilstate_id'];
           this.formData.position_id = data['position_id'];
-          this.formData.immediateboss_id = data['immediateboss_id'];
           this.fotoMiniatura = data['foto'];
+          data['immediateboss_id'] ? this.formData.immediateboss_id = data['immediateboss_id'] : this.formData.immediateboss_id = null;
           break;
 
         case 'show':
@@ -2332,7 +2336,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           this.formData.estado_contrato = data['estado_contrato'];
           this.formData.civilstate_id = data['civilstate']['nombre'];
           this.formData.position_id = data['position']['nombre'];
-          data['immediateBosses'] ? this.formData.immediateboss_id = data['immediateBosses']['nombre'] : this.formData.immediateboss_id = '';
+          data['immediateboss_id'] ? this.formData.immediateboss_id = data['immediate_boss']['nombres'] + ' ' + data['immediate_boss']['apellidos'] : this.formData.immediateboss_id = '';
           this.fotoMiniatura = data['foto'];
           break;
 
@@ -2357,11 +2361,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     obtenerImagen: function obtenerImagen(e) {
       this.foto = event.target.files[0];
-      /* if (this.formData.foto.type === 'image/png') {
-        this.$swal('La imagen es PNG');
-       } */
-      //console.log(this.foto);
-
       this.showImage(this.foto);
     },
     showImage: function showImage(file) {
@@ -2393,22 +2392,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         console.error(err);
       });
     },
-    getImmediateBosses: function getImmediateBosses(id) {
-      var _this3 = this;
-
+    //se resetea el valor de jefe inmediato
+    getImmediateBosses: function getImmediateBosses() {
       this.formData.immediateboss_id = '';
-      axios.get('employe/getImmediateBoss', {
-        params: {
-          position_id: id
-        }
-      }).then(function (res) {
-        _this3.immediateBosses = res.data;
-      })["catch"](function (err) {
-        console.error(err);
-      });
     },
     saveEmploye: function saveEmploye() {
-      var _this4 = this;
+      var _this3 = this;
 
       if (this.$v.$invalid) {
         this.$swal({
@@ -2429,7 +2418,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             "Content-Type": "multipart/form-data"
           }
         }).then(function (res) {
-          _this4.$swal({
+          _this3.$swal({
             position: 'top',
             icon: 'success',
             title: 'Empleado creado exitosamente!',
@@ -2438,16 +2427,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             timer: 1800
           });
 
-          _this4.getEmployes(_this4.employes.current_page);
+          _this3.getAllEmployes();
 
-          _this4.closeModal();
+          _this3.getEmployes(_this3.employes.current_page);
+
+          _this3.closeModal();
         })["catch"](function (err) {
           console.error(err);
         });
       }
     },
     updateEmploye: function updateEmploye(id) {
-      var _this5 = this;
+      var _this4 = this;
 
       var data = new FormData();
       data.append("id", this.id);
@@ -2458,7 +2449,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           "Content-Type": "multipart/form-data"
         }
       }).then(function (res) {
-        _this5.$swal({
+        _this4.$swal({
           position: 'top',
           icon: 'success',
           title: 'Empleado editado exitosamente!',
@@ -2467,9 +2458,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           timer: 1800
         });
 
-        _this5.getEmployes(_this5.employes.current_page);
+        _this4.getAllEmployes();
 
-        _this5.closeModal();
+        _this4.getEmployes(_this4.employes.current_page);
+
+        _this4.closeModal();
       })["catch"](function (err) {
         console.error(err);
       });
@@ -2519,14 +2512,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     getEmployes: function getEmployes(page) {
-      var _this6 = this;
+      var _this5 = this;
 
       axios.get('employe/get', {
         params: {
+          paginate: true,
           page: page
         }
       }).then(function (res) {
-        _this6.employes = res.data;
+        _this5.employes = res.data;
+      })["catch"](function (err) {
+        console.error(err);
+      });
+    },
+    getAllEmployes: function getAllEmployes() {
+      var _this6 = this;
+
+      axios.get('employe/get').then(function (res) {
+        _this6.allEmployes = res.data;
       })["catch"](function (err) {
         console.error(err);
       });
@@ -2546,7 +2549,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               _this7.getEmployes();
 
-            case 3:
+              _this7.getAllEmployes();
+
+            case 4:
             case "end":
               return _context.stop();
           }
@@ -7101,7 +7106,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".index_css {\n  margin-top: 5rem;\n  /* .form-check-input .is-invalid &.form-check-label{\n    color: #e3342f !important;\n  } */\n}\n.index_css .upload_file {\n  max-width: 61%;\n  margin-left: 15px;\n}\n.index_css .modal-content {\n  z-index: 999;\n}\n.index_css .card-body {\n  z-index: 5;\n}\n.index_css .check_pointer {\n  cursor: pointer;\n}\n.index_css .check_pointer .form-check-input:hover {\n  cursor: pointer;\n}\n.index_css .check_pointer .form-check-label:hover {\n  cursor: pointer;\n}\n.index_css .form-check-input.is-valid ~ .form-check-label {\n  color: black !important;\n}", ""]);
+exports.push([module.i, ".index_css {\n  margin-top: 5rem;\n}\n.index_css .upload_file {\n  max-width: 61%;\n  margin-left: 15px;\n}\n.index_css .modal-content {\n  z-index: 999;\n}\n.index_css .card-body {\n  z-index: 5;\n}\n.index_css .check_pointer {\n  cursor: pointer;\n}\n.index_css .check_pointer .form-check-input:hover {\n  cursor: pointer;\n}\n.index_css .check_pointer .form-check-label:hover {\n  cursor: pointer;\n}\n.index_css .form-check-input.is-valid ~ .form-check-label {\n  color: black !important;\n}", ""]);
 
 // exports
 
@@ -43402,9 +43407,11 @@ var render = function() {
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(data.position.nombre))]),
                     _vm._v(" "),
-                    data.estado_contrato
-                      ? _c("td", [_vm._v("Activo")])
-                      : _c("td", [_vm._v("Inactivo")]),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(data.estado_contrato ? "Activo" : "Inactivo")
+                      )
+                    ]),
                     _vm._v(" "),
                     data.immediate_boss
                       ? _c("td", [
@@ -43432,8 +43439,7 @@ var render = function() {
                           on: {
                             click: function($event) {
                               $event.preventDefault()
-                              _vm.openModal("update", data),
-                                _vm.getImmediateBosses(data.position_id)
+                              return _vm.openModal("update", data)
                             }
                           }
                         },
@@ -44322,11 +44328,7 @@ var render = function() {
                                         : $$selectedVal[0]
                                     )
                                   },
-                                  function($event) {
-                                    return _vm.getImmediateBosses(
-                                      _vm.formData.position_id
-                                    )
-                                  }
+                                  _vm.getImmediateBosses
                                 ]
                               }
                             },

@@ -9,18 +9,23 @@ use Storage;
 
 class EmployeController extends Controller
 {
-    public function get()
+    public function get(Request $request)
     {
+      if($request->paginate){
         return Employe::with(['position','civilstate', 'immediateBoss'])->/* latest()-> */paginate(5);
+      }else{
+        return Employe::with(['position','civilstate', 'immediateBoss'])->get();
+      }
     }
 
-    public function getImmediateBoss(Request $request)
+    /* public function getImmediateBoss(Request $request)
     {
         $positionSelect = $request->position_id;
         $positionSelect--;
+        dd($positionSelect);
         return Employe::with('position','civilstate', 'immediateBoss')
             ->where([['position_id', $positionSelect], ['estado_contrato', 1]])->get();
-    }
+    } */
 
     /* Crear empleado */
     public function create(Request $request)
