@@ -8,11 +8,15 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 //Sección de librerias
-import VueSweetalert2 from 'vue-sweetalert2';
-// If you don't need the styles, do not connect
-import 'sweetalert2/dist/sweetalert2.min.css';
-Vue.use(VueSweetalert2);
-Vue.component('pagination', require('laravel-vue-pagination'));
+import VueSweetalert2 from 'vue-sweetalert2'
+//Import sweetalert 2 como componente vuejs
+import 'sweetalert2/dist/sweetalert2.min.css'
+Vue.use(VueSweetalert2)
+Vue.component('pagination', require('laravel-vue-pagination'))
+//Import vuevalidate componente validación front vuejs
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

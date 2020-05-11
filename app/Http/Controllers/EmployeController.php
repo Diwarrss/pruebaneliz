@@ -74,7 +74,8 @@ class EmployeController extends Controller
             if ($request->foto) {
                 //borrar foto actual del storage
                 $fileActually = $employe->foto;
-                Storage::delete($fileActually);
+                unlink(public_path('/'.$fileActually));
+
                 //proceso para guardar la imagen en storage
                 $file = $request->foto;
                 $nombreImagen = time() . '.' . $file->getClientOriginalExtension();
@@ -117,10 +118,9 @@ class EmployeController extends Controller
         $searchImmediate = collect(Employe::where('immediateboss_id', $employe->id)->get());
 
         if ($searchImmediate->count() === 0) {
-            //eliminar la imagen FALTA REVISARLA
+            //borrar foto actual del storage
             $fileActually = $employe->foto;
-            //dd($fileActually);
-            Storage::delete($fileActually);
+            unlink(public_path('/'.$fileActually));
 
             $employe->delete();
             return response()->json(

@@ -86,43 +86,67 @@
           <div class="modal-body">
             <form enctype="multipart/form-data">
               <div class="form-group row">
-                <label for="documento" class="col-md-4 col-form-label font-weight-bold">Documento</label>
+                <label for="documento" class="col-md-4 col-form-label font-weight-bold">Documento: </label>
                 <div class="col-md-8">
-                  <input v-model="formData.documento" type="text" class="form-control" id="documento" v-if="typeModal != 'show'">
+                  <input v-model="formData.documento" type="text" class="form-control" id="documento" v-if="typeModal != 'show'" :class="{'is-invalid' : $v.formData.documento.$invalid, 'is-valid' : !$v.formData.documento.$invalid}">
                   <span class="form-control" v-else>{{formData.documento}}</span>
+                  <div class="invalid-feedback" v-if="!$v.formData.documento.required">
+                    Campo documento es obligatorio.
+                  </div>
+                  <div class="invalid-feedback" v-if="!$v.formData.documento.maxLength">
+                    Campo documento solo puede tener {{$v.formData.documento.$params.maxLength.max}} caracteres.
+                  </div>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="nombres" class="col-md-4 col-form-label font-weight-bold">Nombres</label>
+                <label for="nombres" class="col-md-4 col-form-label font-weight-bold">Nombres: </label>
                 <div class="col-md-8">
-                  <input v-model="formData.nombres" type="text" class="form-control" id="nombres" v-if="typeModal != 'show'">
+                  <input v-model="formData.nombres" type="text" class="form-control" id="nombres" v-if="typeModal != 'show'" :class="{'is-invalid' : $v.formData.nombres.$invalid, 'is-valid' : !$v.formData.nombres.$invalid}">
                   <span class="form-control" v-else>{{formData.nombres}}</span>
+                  <div class="invalid-feedback" v-if="!$v.formData.nombres.required">
+                    Campo nombres es obligatorio.
+                  </div>
+                  <div class="invalid-feedback" v-if="!$v.formData.nombres.maxLength">
+                    Campo nombres solo puede tener {{$v.formData.nombres.$params.maxLength.max}} caracteres.
+                  </div>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="apellidos" class="col-md-4 col-form-label font-weight-bold">Apellidos</label>
+                <label for="apellidos" class="col-md-4 col-form-label font-weight-bold">Apellidos: </label>
                 <div class="col-md-8">
-                  <input v-model="formData.apellidos" type="text" class="form-control" id="apellidos" v-if="typeModal != 'show'">
+                  <input v-model="formData.apellidos" type="text" class="form-control" id="apellidos" v-if="typeModal != 'show'" :class="{'is-invalid' : $v.formData.apellidos.$invalid, 'is-valid' : !$v.formData.apellidos.$invalid}">
                   <span class="form-control" v-else>{{formData.apellidos}}</span>
+                  <div class="invalid-feedback" v-if="!$v.formData.apellidos.required">
+                    Campo apellidos es obligatorio.
+                  </div>
+                  <div class="invalid-feedback" v-if="!$v.formData.apellidos.maxLength">
+                    Campo apellidos solo puede tener {{$v.formData.apellidos.$params.maxLength.max}} caracteres.
+                  </div>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="fechaNacimiento" class="col-md-4 col-form-label font-weight-bold">Fecha Nacimiento</label>
+                <label for="fechaNacimiento" class="col-md-4 col-form-label font-weight-bold">Fecha Nacimiento: </label>
                 <div class="col-md-8">
-                  <input v-model="formData.fecha_nacimiento" type="date" class="form-control" id="fechaNacimiento" v-if="typeModal != 'show'">
+                  <input v-model="formData.fecha_nacimiento" type="date" class="form-control" id="fechaNacimiento" v-if="typeModal != 'show'" :class="{'is-invalid' : $v.formData.fecha_nacimiento.$invalid, 'is-valid' : !$v.formData.fecha_nacimiento.$invalid}">
                   <span class="form-control" v-else>{{formData.fecha_nacimiento}}</span>
+                  <div class="invalid-feedback" v-if="!$v.formData.nombres.required">
+                    Campo fecha de nacimiento es obligatorio.
+                  </div>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="sexo" class="col-md-4 col-form-label font-weight-bold">Sexo</label>
+                <label for="sexo" class="col-md-4 col-form-label font-weight-bold">Sexo: </label>
                 <div class="col-md-8 my-auto" v-if="typeModal != 'show'">
                   <div class="form-check form-check-inline check_pointer">
-                    <input v-model="formData.sexo" class="form-check-input" type="radio" name="radioButtonSexo" id="checkH" value="H">
+                    <input v-model="formData.sexo" class="form-check-input" type="radio" name="radioButtonSexo" id="checkH" value="H" :class="{'is-invalid' : $v.formData.sexo.$invalid, 'is-valid' : !$v.formData.sexo.$invalid}">
                     <label class="form-check-label" for="checkH">Hombre</label>
                   </div>
                   <div class="form-check form-check-inline check_pointer">
-                    <input v-model="formData.sexo" class="form-check-input" type="radio" name="radioButtonSexo" id="checkM" value="M">
+                    <input v-model="formData.sexo" class="form-check-input" type="radio" name="radioButtonSexo" id="checkM" value="M" :class="{'is-invalid' : $v.formData.sexo.$invalid, 'is-valid' : !$v.formData.sexo.$invalid}">
                     <label class="form-check-label" for="checkM">Mujer</label>
+                  </div>
+                  <div class="invalid-feedback" style="display: block;" v-if="!$v.formData.sexo.required">
+                    Campo sexo es obligatorio.
                   </div>
                 </div>
                 <div class="col-md-8 my-auto" v-else>
@@ -130,7 +154,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-md-4 col-form-label font-weight-bold">Foto</label>
+                <label class="col-md-4 col-form-label font-weight-bold">Foto: </label>
                 <div class="col-md-8 upload_file mb-3" v-if="typeModal != 'show'">
                   <input
                     type="file"
@@ -139,6 +163,7 @@
                     id="imagen"
                     lang="es"
                     @change="obtenerImagen"
+                    :class="{'is-invalid' : $v.foto.$invalid && typeModal != 'update', 'is-valid' : !$v.foto.$invalid}"
                     />
                   <label
                     class="custom-file-label"
@@ -152,6 +177,9 @@
                     v-else>
                     {{foto.name}}
                   </label>
+                  <div class="invalid-feedback" v-if="!$v.foto.required && typeModal != 'update'">
+                    Campo foto es obligatorio.
+                  </div>
                 </div>
                 <img
                   class="rounded mx-auto d-block img-fluid"
@@ -160,15 +188,18 @@
                 />
               </div>
               <div class="form-group row">
-                <label for="estado" class="col-md-4 col-form-label font-weight-bold">Estado Contrato</label>
+                <label for="estado" class="col-md-4 col-form-label font-weight-bold">Estado Contrato: </label>
                 <div class="col-md-8 my-auto" v-if="typeModal != 'show'">
                   <div class="form-check form-check-inline check_pointer">
-                    <input v-model="formData.estado_contrato" class="form-check-input" type="radio" name="radioButtonEstado" id="checkA" value="1">
+                    <input v-model="formData.estado_contrato" class="form-check-input" type="radio" name="radioButtonEstado" id="checkA" value="1" :class="{'is-invalid' : $v.formData.estado_contrato.$invalid, 'is-valid' : !$v.formData.estado_contrato.$invalid}">
                     <label class="form-check-label" for="checkA">Activo</label>
                   </div>
                   <div class="form-check form-check-inline check_pointer">
-                    <input v-model="formData.estado_contrato" class="form-check-input" type="radio" name="radioButtonEstado" id="checkI" value="0">
+                    <input v-model="formData.estado_contrato" class="form-check-input" type="radio" name="radioButtonEstado" id="checkI" value="0" :class="{'is-invalid' : $v.formData.estado_contrato.$invalid, 'is-valid' : !$v.formData.estado_contrato.$invalid}">
                     <label class="form-check-label" for="checkI">Inactivo</label>
+                  </div>
+                  <div class="invalid-feedback" style="display: block;" v-if="!$v.formData.estado_contrato.required">
+                    Campo estado contrato es obligatorio.
                   </div>
                 </div>
                 <div class="col-md-8 my-auto" v-else>
@@ -176,9 +207,13 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="estadocivil" class="col-md-4 col-form-label font-weight-bold">Estado Civil</label>
+                <label for="estadocivil" class="col-md-4 col-form-label font-weight-bold">Estado Civil: </label>
                 <div class="col-md-8" v-if="typeModal != 'show'">
-                  <select class="custom-select" v-model="formData.civilstate_id">
+                  <select
+                    class="custom-select"
+                    v-model="formData.civilstate_id"
+                    :class="{'is-invalid' : $v.formData.civilstate_id.$invalid, 'is-valid' : !$v.formData.civilstate_id.$invalid}"
+                    >
                     <option value='' selected disabled>Seleccionar...</option>
                     <option
                       :value="civilstate.id"
@@ -186,18 +221,22 @@
                       {{civilstate.nombre}}
                     </option>
                   </select>
+                  <div class="invalid-feedback" v-if="!$v.formData.civilstate_id.required">
+                    Campo estado civil es obligatorio.
+                  </div>
                 </div>
                 <div class="col-md-8" v-else>
                   <span class="form-control">{{formData.civilstate_id}}</span>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="cargo" class="col-md-4 col-form-label font-weight-bold">Cargo</label>
+                <label for="cargo" class="col-md-4 col-form-label font-weight-bold">Cargo: </label>
                 <div class="col-md-8" v-if="typeModal != 'show'">
                   <select
                     class="custom-select"
                     v-model="formData.position_id"
-                    @change="getImmediateBosses(formData.position_id)">
+                    @change="getImmediateBosses(formData.position_id)"
+                    :class="{'is-invalid' : $v.formData.position_id.$invalid, 'is-valid' : !$v.formData.position_id.$invalid}">
                     <option value='' selected disabled>Seleccionar...</option>
                     <option
                       :value="position.id"
@@ -206,15 +245,21 @@
                       {{position.nombre}}
                     </option>
                   </select>
+                  <div class="invalid-feedback" v-if="!$v.formData.civilstate_id.required">
+                    Campo cargo es obligatorio.
+                  </div>
                 </div>
                 <div class="col-md-8" v-else>
                   <span class="form-control">{{formData.position_id}}</span>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="jefeacargo" class="col-md-4 col-form-label font-weight-bold">Jefe a Cargo</label>
+                <label for="jefeacargo" class="col-md-4 col-form-label font-weight-bold">Jefe a Cargo: </label>
                 <div class="col-md-8" v-if="typeModal != 'show'">
-                  <select class="custom-select" v-model="formData.immediateboss_id">
+                  <select
+                    class="custom-select"
+                    v-model="formData.immediateboss_id"
+                    >
                     <option value='' selected disabled>Seleccionar...</option>
                     <option
                       :value="immediateBoss.id"
@@ -251,6 +296,8 @@
 </template>
 
 <script>
+//importamos las reglas a validar de la API vuelidate
+import { required, maxLength } from 'vuelidate/lib/validators'
   export default {
     data() {
       return {
@@ -275,15 +322,26 @@
         immediateBosses: []
       }
     },
+    validations: {
+      formData:{
+        documento: {required, maxLength: maxLength(15)},
+        nombres: {required, maxLength: maxLength(255)},
+        apellidos: {required, maxLength: maxLength(255)},
+        fecha_nacimiento: {required},
+        sexo: {required},
+        estado_contrato: {required},
+        civilstate_id: {required},
+        position_id: {required},
+        immediateboss_id: ''
+      },
+      foto: {required}
+    },
     filters:{
       /* Funcion para agregar los 0 al inicio del num */
       addCero(value){
         let n = Math.abs(value);
         let zeros = Math.max(0, 4 - Math.floor(n).toString().length );
         let zeroString = Math.pow(10,zeros).toString().substr(1);
-        if( 4 < 0 ) {
-            zeroString = '-' + zeroString;
-        }
 
         return zeroString+n;
       }
@@ -395,31 +453,43 @@
             console.error(err);
           })
       },
-      saveEmploye(){ /* enviamos la informacion del formulario */
-        let data = new FormData();
-        data.append("data", JSON.stringify(this.formData));
-        data.append("foto", this.foto);
-
-        axios.post('employe/create', data, {
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-          })
-        .then(res => {
+      saveEmploye(){
+        if (this.$v.$invalid) {
           this.$swal({
             position: 'top',
-            icon: 'success',
-            title: 'Empleado creado exitosamente!',
-            //showConfirmButton: true,
-            //confirmButtonText: 'Aceptar',
-            timer: 1800
+            icon: 'error',
+            title: 'Errores en el formulario, verificar!',
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+            //timer: 1800
           });
-          this.getEmployes(this.employes.current_page)
-          this.closeModal()
-        })
-        .catch(err => {
-          console.error(err);
-        })
+        }else{
+          /* enviamos la informacion del formulario */
+          let data = new FormData();
+          data.append("data", JSON.stringify(this.formData));
+          data.append("foto", this.foto);
+
+          axios.post('employe/create', data, {
+              headers: {
+                  "Content-Type": "multipart/form-data"
+              }
+            })
+          .then(res => {
+            this.$swal({
+              position: 'top',
+              icon: 'success',
+              title: 'Empleado creado exitosamente!',
+              //showConfirmButton: true,
+              //confirmButtonText: 'Aceptar',
+              timer: 1800
+            });
+            this.getEmployes(this.employes.current_page)
+            this.closeModal()
+          })
+          .catch(err => {
+            console.error(err);
+          })
+        }
       },
       updateEmploye(id){
         let data = new FormData();
@@ -532,6 +602,9 @@
           cursor: pointer;
         }
         cursor: pointer;
+      }
+      .form-check-input.is-valid ~ .form-check-label{
+        color: black !important;
       }
     }
 </style>
