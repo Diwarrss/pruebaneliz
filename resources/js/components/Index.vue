@@ -351,7 +351,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
         let value = positionAfter ? --positionAfter : ''
 
         //filtramos los empleados que cumplan la condición
-        this.immediateBosses.push(value) /* = this.allEmployes.filter(em => (em.position_id == value && em.id != this.id && em.estado_contrato == 1)) */
+        this.immediateBosses = this.allEmployes.filter(em => (em.position_id == value && em.id != this.id && em.estado_contrato == 1))
 
         console.log(this.immediateBosses)
       }

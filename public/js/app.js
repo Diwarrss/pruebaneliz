@@ -2298,12 +2298,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   watch: {
     //cuando se cambia el cargo
     changePosition: function changePosition(val) {
+      var _this = this;
+
       var positionAfter = parseInt(val);
       var value = positionAfter ? --positionAfter : ''; //filtramos los empleados que cumplan la condición
 
-      this.immediateBosses.push(value);
-      /* = this.allEmployes.filter(em => (em.position_id == value && em.id != this.id && em.estado_contrato == 1)) */
-
+      this.immediateBosses = this.allEmployes.filter(function (em) {
+        return em.position_id == value && em.id != _this.id && em.estado_contrato == 1;
+      });
       console.log(this.immediateBosses);
     }
   },
@@ -2382,19 +2384,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       reader.readAsDataURL(file); //url de imagen cargada
     },
     getCivilStates: function getCivilStates() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get('civilstate/get').then(function (res) {
-        _this.civilStates = res.data;
+        _this2.civilStates = res.data;
       })["catch"](function (err) {
         console.error(err);
       });
     },
     getPositions: function getPositions() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.get('position/get').then(function (res) {
-        _this2.positions = res.data;
+        _this3.positions = res.data;
       })["catch"](function (err) {
         console.error(err);
       });
@@ -2404,7 +2406,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.formData.immediateboss_id = '';
     },
     saveEmploye: function saveEmploye() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (this.$v.$invalid) {
         this.$swal({
@@ -2425,7 +2427,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             "Content-Type": "multipart/form-data"
           }
         }).then(function (res) {
-          _this3.$swal({
+          _this4.$swal({
             position: 'top',
             icon: 'success',
             title: 'Empleado creado exitosamente!',
@@ -2434,18 +2436,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             timer: 1800
           });
 
-          _this3.getAllEmployes();
+          _this4.getAllEmployes();
 
-          _this3.getEmployes(_this3.employes.current_page);
+          _this4.getEmployes(_this4.employes.current_page);
 
-          _this3.closeModal();
+          _this4.closeModal();
         })["catch"](function (err) {
           console.error(err);
         });
       }
     },
     updateEmploye: function updateEmploye(id) {
-      var _this4 = this;
+      var _this5 = this;
 
       var data = new FormData();
       data.append("id", this.id);
@@ -2456,7 +2458,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           "Content-Type": "multipart/form-data"
         }
       }).then(function (res) {
-        _this4.$swal({
+        _this5.$swal({
           position: 'top',
           icon: 'success',
           title: 'Empleado editado exitosamente!',
@@ -2465,11 +2467,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           timer: 1800
         });
 
-        _this4.getAllEmployes();
+        _this5.getAllEmployes();
 
-        _this4.getEmployes(_this4.employes.current_page);
+        _this5.getEmployes(_this5.employes.current_page);
 
-        _this4.closeModal();
+        _this5.closeModal();
       })["catch"](function (err) {
         console.error(err);
       });
@@ -2519,7 +2521,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     getEmployes: function getEmployes(page) {
-      var _this5 = this;
+      var _this6 = this;
 
       axios.get('employe/get', {
         params: {
@@ -2527,36 +2529,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           page: page
         }
       }).then(function (res) {
-        _this5.employes = res.data;
+        _this6.employes = res.data;
       })["catch"](function (err) {
         console.error(err);
       });
     },
     getAllEmployes: function getAllEmployes() {
-      var _this6 = this;
+      var _this7 = this;
 
       axios.get('employe/get').then(function (res) {
-        _this6.allEmployes = res.data;
+        _this7.allEmployes = res.data;
       })["catch"](function (err) {
         console.error(err);
       });
     }
   },
   created: function created() {
-    var _this7 = this;
+    var _this8 = this;
 
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _this7.getCivilStates();
+              _this8.getCivilStates();
 
-              _this7.getPositions();
+              _this8.getPositions();
 
-              _this7.getEmployes();
+              _this8.getEmployes();
 
-              _this7.getAllEmployes();
+              _this8.getAllEmployes();
 
             case 4:
             case "end":
