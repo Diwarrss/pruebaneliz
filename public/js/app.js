@@ -2299,9 +2299,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     //cuando se cambia el cargo
     changePosition: function changePosition(val) {
       var positionAfter = parseInt(val);
-      var value = positionAfter != '' ? --positionAfter : ''; //filtramos los empleados que cumplan la condición
+      var value = positionAfter ? --positionAfter : ''; //filtramos los empleados que cumplan la condición
 
-      this.immediateBosses.push(val);
+      this.immediateBosses.push(value);
       /* = this.allEmployes.filter(em => (em.position_id == value && em.id != this.id && em.estado_contrato == 1)) */
 
       console.log(this.immediateBosses);
