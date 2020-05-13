@@ -311,7 +311,8 @@ import { required, maxLength } from 'vuelidate/lib/validators'
         allEmployes: [],
         employes: {},
         civilStates: [],
-        positions: []
+        positions: [],
+        immediateBosses: []
       }
     },
     validations: {
@@ -339,14 +340,18 @@ import { required, maxLength } from 'vuelidate/lib/validators'
       }
     },
     computed: {
-      immediateBosses(){
-        let positionAfter = this.formData.position_id
+      changePosition(){
+        return this.formData.position_id
+      }
+    },
+    watch: {
+      //cuando se cambia el cargo
+      changePosition: function (val) {
+        let positionAfter = val
         let value = positionAfter != '' ? --positionAfter : ''
         console.log(value)
         //filtramos los empleados que cumplan la condición
-        let result = this.allEmployes.filter(em => (em.position_id == value && em.id != this.id && em.estado_contrato == 1))
-
-        return result
+        this.immediateBosses = this.allEmployes.filter(em => (em.position_id == value && em.id != this.id && em.estado_contrato == 1))
       }
     },
     methods: {

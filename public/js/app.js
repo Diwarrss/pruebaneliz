@@ -2242,7 +2242,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       allEmployes: [],
       employes: {},
       civilStates: [],
-      positions: []
+      positions: [],
+      immediateBosses: []
     };
   },
   validations: {
@@ -2290,17 +2291,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   computed: {
-    immediateBosses: function immediateBosses() {
+    changePosition: function changePosition() {
+      return this.formData.position_id;
+    }
+  },
+  watch: {
+    //cuando se cambia el cargo
+    changePosition: function changePosition(val) {
       var _this = this;
 
-      var positionAfter = this.formData.position_id;
+      var positionAfter = val;
       var value = positionAfter != '' ? --positionAfter : '';
       console.log(value); //filtramos los empleados que cumplan la condición
 
-      var result = this.allEmployes.filter(function (em) {
+      this.immediateBosses = this.allEmployes.filter(function (em) {
         return em.position_id == value && em.id != _this.id && em.estado_contrato == 1;
       });
-      return result;
     }
   },
   methods: {
