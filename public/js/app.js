@@ -2298,7 +2298,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   watch: {
     //cuando se cambia el cargo
     changePosition: function changePosition(val) {
-      var positionAfter = val;
+      var positionAfter = parseInt(val);
       var value = positionAfter != '' ? --positionAfter : ''; //filtramos los empleados que cumplan la condición
 
       this.immediateBosses.push(val);

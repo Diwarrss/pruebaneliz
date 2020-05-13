@@ -347,7 +347,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
     watch: {
       //cuando se cambia el cargo
       changePosition: function (val) {
-        let positionAfter = val
+        let positionAfter = parseInt(val)
         let value = positionAfter != '' ? --positionAfter : ''
 
         //filtramos los empleados que cumplan la condición
