@@ -2303,9 +2303,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var value = positionAfter ? --positionAfter : ''; //filtramos los empleados que cumplan la condición
 
       me.immediateBosses = me.allEmployes.filter(function (em) {
-        return parseInt(em.position_id) == value
-        /*  && em.id != me.id && parseInt(em.estado_contrato) == 1 */
-        ;
+        return parseInt(em.position_id) == value && em.id != me.id;
       });
       console.log(me.immediateBosses);
     }
@@ -44450,8 +44448,33 @@ var render = function() {
                                   }
                                 },
                                 [_vm._v("Seleccionar...")]
-                              )
-                            ]
+                              ),
+                              _vm._v(" "),
+                              _vm._l(_vm.immediateBosses, function(
+                                immediateBoss,
+                                index
+                              ) {
+                                return _c(
+                                  "option",
+                                  {
+                                    key: index,
+                                    domProps: { value: immediateBoss.id }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                    " +
+                                        _vm._s(immediateBoss.nombres) +
+                                        " " +
+                                        _vm._s(immediateBoss.apellidos) +
+                                        " - " +
+                                        _vm._s(immediateBoss.position.nombre) +
+                                        "\n                  "
+                                    )
+                                  ]
+                                )
+                              })
+                            ],
+                            2
                           )
                         ])
                       : _c("div", { staticClass: "col-md-8" }, [
