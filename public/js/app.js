@@ -2304,7 +2304,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var value = positionAfter ? --positionAfter : ''; //filtramos los empleados que cumplan la condición
 
       this.immediateBosses = this.allEmployes.filter(function (em) {
-        return em.position_id == value && em.id != _this.id && em.estado_contrato == 1;
+        return parseInt(em.position_id) == value && em.id != _this.id && parseInt(em.estado_contrato) == 1;
       });
       console.log(this.immediateBosses);
     }
