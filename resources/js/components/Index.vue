@@ -254,12 +254,12 @@
                     v-model="formData.immediateboss_id"
                     >
                     <option value='' selected disabled>Seleccionar...</option>
-                    <option
+                    <!-- <option
                       :value="immediateBoss.id"
                       v-for="(immediateBoss, index) in immediateBosses" :key="index"
                       >
                       {{immediateBoss.nombres}} {{immediateBoss.apellidos}} - {{immediateBoss.position.nombre}}
-                    </option>
+                    </option> -->
                   </select>
                 </div>
                 <div class="col-md-8" v-else>
@@ -349,9 +349,11 @@ import { required, maxLength } from 'vuelidate/lib/validators'
       changePosition: function (val) {
         let positionAfter = val
         let value = positionAfter != '' ? --positionAfter : ''
-        console.log(value)
+
         //filtramos los empleados que cumplan la condición
-        this.immediateBosses = this.allEmployes.filter(em => (em.position_id == value && em.id != this.id && em.estado_contrato == 1))
+        this.immediateBosses.push(val) /* = this.allEmployes.filter(em => (em.position_id == value && em.id != this.id && em.estado_contrato == 1)) */
+
+        console.log(this.immediateBosses)
       }
     },
     methods: {
