@@ -2233,7 +2233,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         sexo: '',
         estado_contrato: '',
         civilstate_id: '',
-        position_id: '',
+        position_id: 0,
         immediateboss_id: ''
       },
       foto: '',
