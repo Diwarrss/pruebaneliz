@@ -28,7 +28,12 @@
               <td v-text="data.documento"></td>
               <td>{{data.nombres}} {{data.apellidos}} </td>
               <td>{{data.position.nombre}}</td>
-              <td>{{data.estado_contrato ? 'Activo' : 'Inactivo'}}</td>
+              <td v-if="data.estado_contrato == '1'">
+                Activo
+              </td>
+              <td v-else-if="data.estado_contrato == '0'">
+                Inactivo
+              </td>
               <td v-if="data.immediate_boss">
                 <strong>{{data.immediate_boss.nombres}} {{data.immediate_boss.apellidos}}</strong> <br>
                 <i>{{data.immediate_boss.position.nombre}}</i>
@@ -191,7 +196,7 @@
                   </div>
                 </div>
                 <div class="col-md-8 my-auto" v-else>
-                  <span class="form-control">{{formData.estado_contrato == 1 ? 'Activo' : 'Inactivo'}}</span>
+                  <span class="form-control">{{formData.estado_contrato === 1 ? 'Activo' : 'Inactivo'}}</span>
                 </div>
               </div>
               <div class="form-group row">
@@ -282,7 +287,6 @@
     </div>
   </div>
 </template>
-
 <script>
 //importamos las reglas a validar de la API vuelidate
 import { required, maxLength } from 'vuelidate/lib/validators'
@@ -338,14 +342,11 @@ import { required, maxLength } from 'vuelidate/lib/validators'
       immediateBosses(){
         let positionAfter = this.formData.position_id
         let value = positionAfter != '' ? --positionAfter : ''
-        let result = this.allEmployes.filter(em => (em.position_id === value))
-        if (result.length) {
-          return result
-        }else{
-          this.formData.immediateboss_id = ''
-          return ''
-        }
-      },
+        //filtramos los empleados que cumplan la condición
+        let result = this.allEmployes.filter(em => (em.position_id === value && em.id != this.id && em.estado_contrato === 1))
+        console.log(result)
+        return result
+      }
     },
     methods: {
       /* al abrir la modal recibimos 2 parametros */
@@ -382,7 +383,9 @@ import { required, maxLength } from 'vuelidate/lib/validators'
             this.formData.estado_contrato = data['estado_contrato']
             this.formData.civilstate_id = data['civilstate']['nombre']
             this.formData.position_id = data['position']['nombre']
+            //obtenemos el Nombre del Jefe
             data['immediateboss_id'] ? this.formData.immediateboss_id = data['immediate_boss']['nombres'] + ' ' + data['immediate_boss']['apellidos'] : this.formData.immediateboss_id = ''
+
             this.fotoMiniatura = data['foto']
             break;
 
