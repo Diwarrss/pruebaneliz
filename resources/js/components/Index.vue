@@ -347,13 +347,14 @@ import { required, maxLength } from 'vuelidate/lib/validators'
     watch: {
       //cuando se cambia el cargo
       changePosition: function (val) {
+        let me = this
         let positionAfter = parseInt(val)
         let value = positionAfter ? --positionAfter : ''
 
         //filtramos los empleados que cumplan la condición
-        this.immediateBosses = this.allEmployes.filter(em => { return (parseInt(em.position_id) == value && em.id != this.id && parseInt(em.estado_contrato) == 1)})
+        me.immediateBosses = me.allEmployes.filter(em => { return (parseInt(em.position_id) == value/*  && em.id != me.id && parseInt(em.estado_contrato) == 1 */)})
 
-        console.log(this.immediateBosses)
+        console.log(me.immediateBosses)
       }
     },
     methods: {
