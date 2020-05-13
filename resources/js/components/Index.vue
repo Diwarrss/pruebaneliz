@@ -342,9 +342,10 @@ import { required, maxLength } from 'vuelidate/lib/validators'
       immediateBosses(){
         let positionAfter = this.formData.position_id
         let value = positionAfter != '' ? --positionAfter : ''
+        console.log(value)
         //filtramos los empleados que cumplan la condición
-        let result = this.allEmployes.filter(em => (em.position_id === value && em.id != this.id && em.estado_contrato === 1))
-        console.log(result)
+        let result = this.allEmployes.filter(em => (em.position_id == value && em.id != this.id && em.estado_contrato == 1))
+
         return result
       }
     },
